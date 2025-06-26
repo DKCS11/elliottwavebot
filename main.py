@@ -4,15 +4,13 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-# === CONFIGURATION ===
-BOT_TOKEN = "7960553174:AAE2UcsTyALD69ThMM_Bi2Vuxs9Z1GvLsLc"  # <-- Your Telegram Bot Token
+# === Configuration ===
+BOT_TOKEN = "7960553174:AAE2UcsTyALD69ThMM_Bi2Vuxs9Z1GvLsLc"
 HUGGINGFACE_API_TOKEN = os.environ.get("HUGGINGFACE_API_TOKEN")
-HF_API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1"
-
-# === TELEGRAM API ===
+HF_API_URL = "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-alpha"
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 
-# === HANDLE INCOMING MESSAGES ===
+# === Hugging Face AI Response ===
 def generate_reply(message):
     headers = {
         "Authorization": f"Bearer {HUGGINGFACE_API_TOKEN}",
@@ -20,21 +18,24 @@ def generate_reply(message):
     }
 
     payload = {
-        "inputs": f"You are a helpful and skilled Elliott Wave trading assistant. Answer the following: {message}",
-        "parameters": {"max_new_tokens": 200}
+        "inputs": f"You are a skilled Elliott Wave trading assistant. Respond concisely and clearly to: {message}",
+        "parameters": {
+            "max_new_tokens": 200,
+            "temperature": 0.7
+        }
     }
 
     try:
         response = requests.post(HF_API_URL, headers=headers, json=payload)
         if response.status_code == 200:
             result = response.json()
-            return result[0]["generated_text"]
+            return result[0]['generated_text']
         else:
-            return f"❌ HuggingFace Error {response.status_code}: {response.text}"
+            return f"❌ Hugging Face Error {response.status_code}: {response.text}"
     except Exception as e:
-        return f"⚠️ Error: {e}"
+        return f"⚠️ Exception occurred: {e}"
 
-# === TELEGRAM WEBHOOK ROUTE ===
+# === Telegram Webhook Handler ===
 @app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def telegram_webhook():
     data = request.get_json()
@@ -51,12 +52,12 @@ def telegram_webhook():
 
     return {"ok": True}
 
-# === ROOT ENDPOINT ===
+# === Default Route ===
 @app.route("/")
 def home():
-    return "Elliott Wave Bot is running with Hugging Face AI!"
+    return "Your Elliott Wave AI Bot is live and ready to trade!"
 
-# === START SERVER ===
+# === Server Start ===
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
 
