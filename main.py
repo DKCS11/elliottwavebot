@@ -1,3 +1,4 @@
+import os
 import requests
 from flask import Flask, request
 
@@ -5,7 +6,7 @@ app = Flask(__name__)
 
 # === CONFIGURATION ===
 BOT_TOKEN = "7960553174:AAE2UcsTyALD69ThMM_Bi2Vuxs9Z1GvLsLc"  # <-- Your Telegram Bot Token
-HUGGINGFACE_API_TOKEN = "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"       # <-- Paste your Hugging Face token here
+HUGGINGFACE_API_TOKEN = os.environ.get("HUGGINGFACE_API_TOKEN")
 HF_API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1"
 
 # === TELEGRAM API ===
