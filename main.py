@@ -3,13 +3,11 @@ import requests
 from flask import Flask, request
 from dotenv import load_dotenv
 
-# === Load environment variables from .env or Render ===
+# === Load environment variables ===
 load_dotenv()
 
-# === Flask app ===
 app = Flask(__name__)
 
-# === Config ===
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
@@ -21,7 +19,6 @@ if not OPENROUTER_API_KEY:
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-# === AI reply logic ===
 def generate_reply(message: str) -> str:
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
@@ -29,9 +26,15 @@ def generate_reply(message: str) -> str:
     }
 
     payload = {
-        "model": "openrouter/gpt-4o-mini",
+        "model": "meta/llama-4-maverick",
         "messages": [
-            {"role": "system", "content": "You are an Elliott Wave trading assistant and trade manager."},
+            {
+                "role": "system",
+                "content": (
+                    "You are an Elliott Wave trading assistant and trade manager. "
+                    "Provide helpful, concise trading advice and manage trades effectively."
+                )
+            },
             {"role": "user", "content": message}
         ]
     }
@@ -48,7 +51,6 @@ def generate_reply(message: str) -> str:
     except Exception as e:
         return f"❌ Unexpected Error: {e}"
 
-# === Telegram webhook endpoint ===
 @app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def telegram_webhook():
     data = request.get_json(force=True)
@@ -64,11 +66,9 @@ def telegram_webhook():
 
     return {"ok": True}
 
-# === Health check route ===
 @app.route("/")
 def home():
-    return "✅ Elliott Wave Trade Manager Bot via OpenRouter is running!"
+    return "✅ Elliott Wave Trade Manager Bot is running!"
 
-# === Run app on Render ===
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
