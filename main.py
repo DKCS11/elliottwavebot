@@ -29,7 +29,7 @@ def generate_reply(message: str) -> str:
     }
 
     payload = {
-        "model": "openrouter/openai/gpt-4",  # Using GPT-4 model here
+        "model": "openrouter/gpt-4o-mini",
         "messages": [
             {"role": "system", "content": "You are an Elliott Wave trading assistant and trade manager."},
             {"role": "user", "content": message}
