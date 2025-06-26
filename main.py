@@ -3,7 +3,7 @@ import requests
 from flask import Flask, request
 from dotenv import load_dotenv
 
-# === Load .env variables ===
+# === Load environment variables ===
 load_dotenv()
 
 # === Flask App ===
