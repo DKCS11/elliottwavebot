@@ -7,7 +7,7 @@ app = Flask(__name__)
 # === Configuration ===
 BOT_TOKEN = "7960553174:AAE2UcsTyALD69ThMM_Bi2Vuxs9Z1GvLsLc"
 HUGGINGFACE_API_TOKEN = os.environ.get("HUGGINGFACE_API_TOKEN")
-HF_API_URL = "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-alpha"
+HF_API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-large"
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 
 # === Hugging Face AI Response ===
@@ -18,11 +18,7 @@ def generate_reply(message):
     }
 
     payload = {
-        "inputs": f"You are a skilled Elliott Wave trading assistant. Respond concisely and clearly to: {message}",
-        "parameters": {
-            "max_new_tokens": 200,
-            "temperature": 0.7
-        }
+        "inputs": f"You are an Elliott Wave trading assistant. Help me understand or trade this: {message}"
     }
 
     try:
@@ -55,9 +51,10 @@ def telegram_webhook():
 # === Default Route ===
 @app.route("/")
 def home():
-    return "Your Elliott Wave AI Bot is live and ready to trade!"
+    return "Your Elliott Wave AI Bot is live and using flan-t5-large!"
 
 # === Server Start ===
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
 
